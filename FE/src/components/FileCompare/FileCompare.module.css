@@ -1,0 +1,39 @@
+.container {
+  text-align: center;
+}
+
+.uploadSection {
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+.result table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.result th, .result td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+
+.deletedRow {
+  background-color: red;
+  color: white;
+}
+
+.addedRow {
+  background-color: green;
+  color: white;
+}
+
+.modifiedRow {
+  background-color: yellow;
+}
