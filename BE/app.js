@@ -1,10 +1,14 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
+
 //const authRoutes = require("./src/routes/auth_route.js");
 const uploadRoutes = require("./src/routes/upload_route.js");
 const compareRoutes = require("./src/routes/compare_route.js");
 
 const port = 3000;
+
+app.use(cors());
 
 app.use(express.json());
 
