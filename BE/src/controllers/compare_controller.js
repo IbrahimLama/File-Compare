@@ -1,5 +1,6 @@
 const { exec } = require("child_process");
 const path = require("path");
+const fs = require("fs");
 
 const compareFiles = (req, res) => {
   const { file1, file2 } = req.query;
@@ -19,8 +20,26 @@ const compareFiles = (req, res) => {
       return res.status(500).json({ error: `Error executing diff: ${stderr}` });
     }
 
+    // Read full file contents to split into lines
+    let file1Lines = [];
+    let file2Lines = [];
+    try {
+      const file1Content = fs.readFileSync(absPath1, "utf8");
+      const file2Content = fs.readFileSync(absPath2, "utf8");
+      file1Lines = file1Content.split(/\r?\n/);
+      file2Lines = file2Content.split(/\r?\n/);
+    } catch (readError) {
+      console.error(readError);
+      return res.status(500).json({ error: "Error reading uploaded files." });
+    }
+
     if (!stdout) {
-      return res.json({ message: "No differences found." });
+      return res.json({
+        file1Lines,
+        file2Lines,
+        differences: [],
+        message: "No differences found.",
+      });
     }
 
     const diffOutput = stdout.split("\n");
@@ -31,7 +50,6 @@ const compareFiles = (req, res) => {
     for (let i = 0; i < diffOutput.length; i++) {
       const line = diffOutput[i];
 
-      // Check if line follows the pattern "number char number" (e.g., "6c7", "4d5", etc.)
       const match = line.match(/^(\d+)([acd])(\d+)$/);
       if (match) {
         lineNumber1 = match[1];
@@ -54,8 +72,14 @@ const compareFiles = (req, res) => {
       }
     }
 
-    return res.json({ differences });
+    return res.json({
+      file1Lines,
+      file2Lines,
+      differences,
+      message: "Comparison successful",
+    });
   });
 };
 
 module.exports = { compareFiles };
+
